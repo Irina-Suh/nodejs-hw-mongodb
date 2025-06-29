@@ -1,16 +1,21 @@
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
+// import pino from 'pino-http';
 
 import { getEnvVar } from './utils/getEnvVar.js';
 import contacts from './routers/contacts.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 export function setupServer() {
     const app = express();
 
     app.use(cors());
-    app.use(pino());
-    app.use(express.json());
+    // app.use(pino());
+    app.use(express.json({
+      type: ['application/json', 'application/vnd.api+json'],
+      limit: '100kb',
+    }));
 
     app.get('/', (req, res) => {
         res.json({
@@ -18,11 +23,15 @@ export function setupServer() {
         });
       });
 
-    app.use('/contacts',  contacts);
+   app.use('/contacts',  contacts);
 
-    app.use((req, res) => {
-        res.status(404).json({ message: 'Not found' });
-    });
+
+    app.use(notFoundHandler);
+
+    app.use(errorHandler);
+    // app.use((req, res) => {
+    //     res.status(404).json({ message: 'Not found' });
+    // });
 
 
    const PORT = getEnvVar('PORT', '3000');
