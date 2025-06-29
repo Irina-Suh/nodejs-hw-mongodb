@@ -11,13 +11,13 @@ export const getAllContacts = async () => {
     return contact;
   };
 
-  export const createContact = async (payload) => {
-    return Contact.create(payload);
+  export const createContact = async (data) => {
+   const contact = await Contact.create(data);
+   return contact;
   };
 
-  export const patchContactById = async (id, payload) => {
-    const contact =  Contact.findByIdAndUpdate(id, payload, {new: true, });
-    if (!contact || !contact.value) return null;
+  export const patchContactById = async (id, data) => {
+    const contact = await Contact.findByIdAndUpdate(id, data, {new: true });
 
     return contact;
     };

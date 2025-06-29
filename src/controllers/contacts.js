@@ -2,16 +2,14 @@ import { createContact, deleteContactById, getAllContacts, getContactById, patch
 import createHttpError from 'http-errors';
 
 export const handleGetAllContacts = async (req, res, next) => {
-  // try {
+
     const contacts = await getAllContacts();
     res.status(200).json({
       status: 200,
       message: 'Successfully found contacts!',
       data: contacts,
     });
-  // } catch (error) {
-  //   next(error);
-  // }
+
 };
 
 export const handleGetContactById = async (req, res, next) => {
@@ -20,13 +18,9 @@ export const handleGetContactById = async (req, res, next) => {
     const contact = await getContactById(contactId);
 
     if (!contact) {
-      // next(new Error('Contact not found'));
-      throw createHttpError(404, 'Contact not found');
-      // return;
 
-      // return res.status(404).json({
-      //   message: 'Contact not found',
-      // });
+      throw createHttpError(404, 'Contact not found');
+
     }
 
     res.status(200).json({
@@ -34,11 +28,9 @@ export const handleGetContactById = async (req, res, next) => {
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
-  // } catch (error) {
-  //   next(error);
-  // }
+
 };
-// src/controllers/students.js
+
 
 
 
@@ -69,6 +61,8 @@ export const patchContactController = async (req, res) => {
     data: updatedContact,
   });
 };
+
+
 
 export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
