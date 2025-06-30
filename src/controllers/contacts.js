@@ -1,19 +1,29 @@
 import { createContact, deleteContactById, getAllContacts, getContactById, patchContactById } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
+
 export const handleGetAllContacts = async (req, res, next) => {
 
-    const contacts = await getAllContacts();
+
+    const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc' } = req.query;
+
+    const result = await getAllContacts({
+      page: Number(page),
+      perPage: Number(perPage),
+      sortBy,
+      sortOrder,
+    });
+
     res.status(200).json({
       status: 200,
       message: 'Successfully found contacts!',
-      data: contacts,
+      data: result,
     });
 
 };
 
 export const handleGetContactById = async (req, res, next) => {
-// try {
+
     const { contactId } = req.params;
     const contact = await getContactById(contactId);
 
@@ -52,7 +62,7 @@ export const patchContactController = async (req, res) => {
   const updatedContact = await patchContactById(contactId, updatedData);
 
   if (!updatedContact) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'Not update');
   }
 
   res.status(200).json({
@@ -69,7 +79,7 @@ export const deleteContactController = async (req, res, next) => {
   const contact = await deleteContactById(contactId);
 
   if (!contact) {
-    next(createHttpError(404, 'Student not found'));
+    next(createHttpError(404, 'Contact not found'));
     return;
   }
 
