@@ -25,10 +25,13 @@ const contactSchema = new Schema(
       required: true,
       default: 'personal',
     },
+    userId: { type: new Schema.Types.ObjectId, ref: 'User', required: true },
+  
   },
   {
     timestamps: true,
   },
+
 );
 
 export const Contact = model('contacts', contactSchema);

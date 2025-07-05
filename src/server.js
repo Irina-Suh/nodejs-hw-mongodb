@@ -4,8 +4,10 @@ import cors from 'cors';
 
 import { getEnvVar } from './utils/getEnvVar.js';
 import contacts from './routers/contacts.js';
+import authRouter from './routers/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import cookieParser from 'cookie-parser';
 
 export function setupServer() {
     const app = express();
@@ -23,6 +25,8 @@ export function setupServer() {
         });
       });
 
+      app.use(cookieParser());
+      app.use('/auth', authRouter);
    app.use('/contacts',  contacts);
 
 

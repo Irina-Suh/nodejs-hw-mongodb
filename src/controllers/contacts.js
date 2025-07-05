@@ -6,12 +6,13 @@ export const handleGetAllContacts = async (req, res, next) => {
 
 
     const { page = 1, perPage = 10, sortBy = 'name', sortOrder = 'asc' } = req.query;
-
+    const userId = req.user._id;
     const result = await getAllContacts({
       page: Number(page),
       perPage: Number(perPage),
       sortBy,
       sortOrder,
+      userId
     });
 
     res.status(200).json({
@@ -25,7 +26,8 @@ export const handleGetAllContacts = async (req, res, next) => {
 export const handleGetContactById = async (req, res, next) => {
 
     const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const userId = req.user._id;
+    const contact = await getContactById(contactId,userId);
 
     if (!contact) {
 
@@ -45,7 +47,10 @@ export const handleGetContactById = async (req, res, next) => {
 
 
 export const createContactController = async (req, res) => {
-  const newContact = await createContact(req.body);
+
+  const userId = req.user._id;
+  const newContact = await createContact(req.body,userId);
+
 
   res.status(201).json({
     status: 201,
@@ -58,8 +63,8 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const updatedData = req.body;
-
-  const updatedContact = await patchContactById(contactId, updatedData);
+  const userId = req.user._id;
+  const updatedContact = await patchContactById(contactId, updatedData,userId);
 
   if (!updatedContact) {
     throw createHttpError(404, 'Not update');
@@ -76,7 +81,8 @@ export const patchContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await deleteContactById(contactId);
+  const userId = req.user._id;
+  const contact = await deleteContactById(contactId,userId);
 
   if (!contact) {
     next(createHttpError(404, 'Contact not found'));
