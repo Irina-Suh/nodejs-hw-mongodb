@@ -1,6 +1,10 @@
-import { REFRESH_EXPIRES_IN, SESSION_COOKIE_EXPIRES } from '../constants/index.js';
-import { register, login, refresh, logout } from '../services/auth.js';
+import { JWT_SECRET, REFRESH_EXPIRES_IN, SESSION_COOKIE_EXPIRES } from '../constants/index.js';
+import Session from '../db/models/Session.js';
+import User from '../db/models/User.js';
+import { register, login, refresh, logout, requestResetToken } from '../services/auth.js';
 import createHttpError from 'http-errors';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -87,4 +91,43 @@ export const logoutUser = async (req, res) => {
   res.clearCookie('refreshToken');
   res.clearCookie('sessionId');
   res.status(204).send();
+};
+
+export const resetEmailController = async (req, res) => {
+  await requestResetToken(req.body.email);
+  res.json({
+    message: 'Reset password email was successfully sent!',
+    status: 200,
+    data: {},
+  });
+};
+
+
+export const resetPasswordController = async (req, res) => {
+  const { token, password } = req.body;
+
+  let payload;
+  try {
+    payload = jwt.verify(token, JWT_SECRET);
+  } catch {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await User.findOne({ email: payload.email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword;
+  await user.save();
+
+  await Session.deleteMany({ userId: user._id });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
 };
