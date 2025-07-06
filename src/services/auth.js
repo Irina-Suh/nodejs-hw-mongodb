@@ -99,3 +99,11 @@ export const refresh = async (refreshToken) => {
 export const logout = async (refreshToken) => {
   await Session.deleteOne({ refreshToken });
 };
+
+export const requestResetToken = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  // kod
+};

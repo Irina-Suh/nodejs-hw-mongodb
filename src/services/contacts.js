@@ -9,7 +9,7 @@ export const getAllContacts = async ({ page = 1,
     const sortDirection = sortOrder === 'desc' ? -1 : 1;
     const filter = { userId: userId };
 
-    const totalItems = await Contact.countDocuments();
+    const totalItems = await Contact.countDocuments(filter);
     const totalPages = Math.ceil(totalItems / perPage);
 
 
@@ -30,7 +30,7 @@ export const getAllContacts = async ({ page = 1,
 
 
   export const getContactById = async (id, userId) => {
-    const contact = await Contact.findById({id, userId: userId} );
+    const contact = await Contact.findOne({_id: id, userId: userId } );
     return contact;
   };
 
@@ -40,7 +40,7 @@ export const getAllContacts = async ({ page = 1,
   };
 
   export const patchContactById = async (id, data, userId) => {
-    const contact = await Contact.findByIdAndUpdate( { _id: id, userId: userId },
+    const contact = await Contact.findOneAndUpdate( { _id: id, userId: userId },
       data,
       { new: true });
 
@@ -48,6 +48,6 @@ export const getAllContacts = async ({ page = 1,
     };
 
   export const deleteContactById = async (id, userId) => {
-    const contact = Contact.findByIdAndDelete({ _id: id, userId: userId });
+    const contact = Contact.findOneAndDelete({ _id: id, userId: userId });
     return contact;
   };
