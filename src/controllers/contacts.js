@@ -1,6 +1,6 @@
 import { createContact, deleteContactById, getAllContacts, getContactById, patchContactById } from '../services/contacts.js';
 import createHttpError from 'http-errors';
-
+import { uploadImage } from '../utils/cloudinary.js';
 
 export const handleGetAllContacts = async (req, res, next) => {
 
@@ -47,9 +47,19 @@ export const handleGetContactById = async (req, res, next) => {
 
 
 export const createContactController = async (req, res) => {
-
+  const { name, phoneNumber, contactType } = req.body;
   const userId = req.user._id;
-  const newContact = await createContact(req.body,userId);
+  let photoUrl = null;
+  if (req.file) {
+    try {
+      photoUrl = await uploadImage(req.file.buffer);
+    } catch (err) {
+      console.error('Image upload failed:', err.message);
+      throw createHttpError(500, 'Image upload failed');
+    }
+  }
+
+  const newContact = await createContact(  { name, phoneNumber, contactType, photo: photoUrl },userId);
 
 
   res.status(201).json({
@@ -62,8 +72,19 @@ export const createContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-  const updatedData = req.body;
+
   const userId = req.user._id;
+  const updatedData = { ...req.body };
+
+  if (req.file) {
+    try {
+      updatedData.photo = await uploadImage(req.file.buffer);
+    } catch (err) {
+      console.error('Image upload failed:', err.message);
+      throw createHttpError(500, 'Image upload failed');
+    }
+  }
+
   const updatedContact = await patchContactById(contactId, updatedData,userId);
 
   if (!updatedContact) {

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import createHttpError from 'http-errors';
 import User from '../db/models/User.js';
 import Session from '../db/models/Session.js';
-import { FIFTEEN_MINUTES, JWT_SECRET, REFRESH_EXPIRES_IN, SESSION_COOKIE_EXPIRES } from '../constants/index.js';
-
+import { APP_DOMAIN, FIFTEEN_MINUTES, JWT_SECRET, REFRESH_EXPIRES_IN, RESET_EXPIRES_IN, SESSION_COOKIE_EXPIRES } from '../constants/index.js';
+import { sendEmail } from '../utils/mailer.js';
 
 export const register = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
@@ -98,4 +98,28 @@ export const refresh = async (refreshToken) => {
 
 export const logout = async (refreshToken) => {
   await Session.deleteOne({ refreshToken });
+};
+
+// Надіслати листа для скидання паролю
+export const sendResetEmail = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: RESET_EXPIRES_IN });
+  const resetLink = `${APP_DOMAIN}/reset-password?token=${token}`;
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Reset your password',
+      html: `<p>Click the link below to reset your password:</p>
+             <a href="${resetLink}">${resetLink}</a>`,
+    });
+  } catch (err) {
+    console.error('Email send error:', err.message);
+    throw createHttpError(500, 'Failed to send the email, please try again later.');
+  }
 };
