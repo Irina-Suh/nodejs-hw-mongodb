@@ -1,0 +1,64 @@
+# swagger/components/schemas/contact.yaml
+
+type: object
+required:
+  - _id
+  - name
+  - phoneNumber
+  - contactType
+  - isFavourite
+  - userId
+  - createdAt
+  - updatedAt
+  - photo
+
+properties:
+  _id:
+    description: "Contact's id"
+    type: string
+    example: 65e4decdd286b30065d54af9
+
+  name:
+    description: "Contact's name"
+    type: string
+    example: 'John Doe'
+
+  phoneNumber:
+    description: "Contact's phone"
+    type: string
+    example: "+380000000001"
+
+  contactType:
+    description: "Contact's type"
+    type: string
+    enum: ['personal', 'work', 'home']
+
+  isFavourite:
+    description: "Contact's average mark. Should be between 1 and 12"
+    type: boolean
+    example: false
+
+  userId:
+    description: 'ID of the user who owns this contact'
+    type: number
+    example: 686d4dfe3859408099726e54
+
+  createdAt:
+    type: string
+    format: date-time
+    description: "Date of creation"
+    example: "2025-07-08T17:23:56.059Z"
+
+  updatedAt:
+    type: string
+    format: date-time
+    description: "Last update date"
+    example: "2025-07-08T18:32:50.775Z"
+
+  photo:
+    type: string
+    description: "Link to contact's photo"
+    example: "https://res.cloudinary.com/dfvbwyhrw/image/upload/v1751999571/contacts-app/u2qrblo3dgbpqyow176s.jpg"
+
+
+
