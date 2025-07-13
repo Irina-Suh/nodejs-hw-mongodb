@@ -18,6 +18,13 @@ parameters:
       type: integer
       example: 10
     description: Number of contacts per page
+  - in: query
+    name: sortBy
+    schema:
+      type: string
+      enum: [name, phoneNumber, isFavourite, contactType, createdAt, updatedAt]
+      example: name
+    description: Field to sort by (e.g., name, createdAt)
 
   - in: query
     name: sortOrder
@@ -26,6 +33,7 @@ parameters:
       enum: [asc, desc]
       example: asc
     description: Sort order
+
 
 responses:
   '200':

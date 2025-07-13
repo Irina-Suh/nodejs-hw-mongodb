@@ -14,8 +14,8 @@
       "url": "http://localhost:3000"
     },
     {
-        "url": "https://nodejs-hw-mongodb-ftdv.onrender.com"
-      }
+      "url": "https://nodejs-hw-mongodb-ftdv.onrender.com"
+    }
   ],
   "tags": [
     {
@@ -224,7 +224,7 @@
     "/contacts/{id}": {
       "get": {
         "tags": [
-          "Contact"
+          "Contacts"
         ],
         "summary": "Get contact by id",
         "operationId": "getScontact",
