@@ -62,6 +62,23 @@
           },
           {
             "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "phoneNumber",
+                "isFavourite",
+                "contactType",
+                "createdAt",
+                "updatedAt"
+              ],
+              "example": "name"
+            },
+            "description": "Field to sort by (e.g., name, createdAt)"
+          },
+          {
+            "in": "query",
             "name": "sortOrder",
             "schema": {
               "type": "string",
@@ -224,7 +241,7 @@
     "/contacts/{id}": {
       "get": {
         "tags": [
-          "Contacts"
+          "Contact"
         ],
         "summary": "Get contact by id",
         "operationId": "getScontact",
